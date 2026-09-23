@@ -1,0 +1,470 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root{
+  --case:#17150F;
+  --case-2:#211E16;
+  --edge:#332E22;
+  --lcd:#0B120E;
+  --amber:#E8B33A;
+  --amber-dim:#8A6C22;
+  --ink:#EDE6D4;
+  --muted:#8A8272;
+  --low:#D9542B;
+  --ok:#7FA05A;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+.app{
+  font-family:'Archivo',system-ui,sans-serif;
+  background:var(--case);
+  color:var(--ink);
+  min-height:100vh;
+  padding:20px 16px 48px;
+  max-width:560px;
+  margin:0 auto;
+  -webkit-font-smoothing:antialiased;
+}
+
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ── header ────────────────────────── */
+.head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:16px;padding-bottom:16px;
+  border-bottom:1px solid var(--edge);
+}
+.head h1{
+  font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1;
+  margin-top:6px;
+}
+.head .total{
+  text-align:right;
+  font-family:'JetBrains Mono',monospace;
+  font-size:20px;font-weight:500;
+  font-variant-numeric:tabular-nums;
+  color:var(--ink);line-height:1;
+}
+.head .total span{display:block;margin-bottom:6px}
+
+/* ── person card ─────────────────────── */
+.card{
+  background:var(--case-2);
+  border:1px solid var(--edge);
+  border-radius:10px;
+  padding:16px;
+  margin-top:14px;
+}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.name{font-size:15px;font-weight:600;letter-spacing:.01em}
+.tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 7px;border-radius:3px;
+  background:rgba(217,84,43,.14);color:var(--low);
+  border:1px solid rgba(217,84,43,.3);
+}
+
+/* ── the LCD ─────────────────────────── */
+.lcd{
+  position:relative;
+  background:var(--lcd);
+  border-radius:6px;
+  border:1px solid #000;
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.04);
+  padding:18px 16px 14px;
+  overflow:hidden;
+}
+.lcd::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);
+}
+.digits{
+  position:relative;
+  font-family:'JetBrains Mono',monospace;
+  font-size:44px;font-weight:700;
+  letter-spacing:.04em;
+  font-variant-numeric:tabular-nums;
+  color:var(--amber);
+  text-shadow:0 0 18px rgba(232,179,58,.35);
+  line-height:1;
+}
+.digits.warn{color:var(--low);text-shadow:0 0 18px rgba(217,84,43,.4)}
+.ghost{
+  position:absolute;top:0;left:0;
+  color:var(--amber);opacity:.07;
+  text-shadow:none;pointer-events:none;
+}
+.digits.warn .ghost{color:var(--low)}
+.lcd-foot{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-top:12px;position:relative;z-index:1;
+}
+.lcd-foot .unit{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--amber-dim);
+}
+.lcd-foot .rate{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.06em;color:var(--amber-dim);
+}
+
+/* ── the sum line ──────────────────────── */
+.sum{
+  display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-variant-numeric:tabular-nums;
+  color:var(--muted);margin-top:12px;
+}
+.sum b{color:var(--ink);font-weight:500}
+
+/* ── buttons ─────────────────────────── */
+.row{display:flex;gap:8px;margin-top:14px}
+button{
+  font-family:'Archivo',sans-serif;
+  font-size:13px;font-weight:600;
+  border-radius:6px;cursor:pointer;
+  transition:background .12s,border-color .12s;
+}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.btn{
+  flex:1;padding:11px;
+  background:transparent;border:1px solid var(--edge);color:var(--ink);
+}
+.btn:hover{background:rgba(255,255,255,.04);border-color:#4A4433}
+.btn.solid{background:var(--amber);border-color:var(--amber);color:#17150F}
+.btn.solid:hover{background:#F0C155}
+.btn.ghost{flex:0 0 auto;padding:11px 12px;color:var(--muted);font-weight:500}
+.btn.danger{background:var(--low);border-color:var(--low);color:#fff}
+.btn.danger:hover{background:#E8663C}
+
+/* secondary actions — always visible, never shouting */
+.row.minor{gap:4px;margin-top:8px;align-items:center}
+.mini{
+  background:none;border:none;
+  font-size:12px;font-weight:500;color:var(--muted);
+  padding:7px 9px;border-radius:5px;
+}
+.mini:hover:not(:disabled){color:var(--ink);background:rgba(255,255,255,.05)}
+.mini:disabled{opacity:.32;cursor:default}
+.mini.danger:hover:not(:disabled){color:var(--low);background:rgba(217,84,43,.1)}
+
+/* ── inline form ─────────────────────── */
+.form{margin-top:12px;padding-top:12px;border-top:1px solid var(--edge)}
+.form label{display:block;margin-bottom:7px}
+input{
+  width:100%;padding:11px 12px;
+  background:var(--lcd);
+  border:1px solid var(--edge);border-radius:6px;
+  color:var(--ink);
+  font-family:'JetBrains Mono',monospace;font-size:16px;
+  font-variant-numeric:tabular-nums;
+}
+input:focus{outline:none;border-color:var(--amber)}
+input::placeholder{color:#4A4433}
+.err{
+  font-size:12px;color:var(--low);margin-top:8px;
+  font-family:'Archivo',sans-serif;line-height:1.4;
+}
+.hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
+
+/* ── log ──────────────────────────────── */
+.log{margin-top:12px;padding-top:12px;border-top:1px solid var(--edge)}
+.log-item{
+  display:flex;justify-content:space-between;gap:12px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);padding:5px 0;
+  font-variant-numeric:tabular-nums;
+}
+.log-item b{color:var(--ink);font-weight:500}
+
+/* ── misc ────────────────────────────── */
+.empty{
+  margin-top:32px;padding:28px 20px;text-align:center;
+  border:1px dashed var(--edge);border-radius:10px;
+  color:var(--muted);font-size:14px;line-height:1.5;
+}
+.foot{
+  margin-top:24px;padding-top:16px;border-top:1px solid var(--edge);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.foot input{width:74px;padding:8px 10px;font-size:14px;text-align:center}
+.link{
+  background:none;border:none;color:var(--muted);
+  font-size:12px;padding:6px 0;text-decoration:underline;
+  text-underline-offset:3px;
+}
+.link:hover{color:var(--ink)}
+.hidden{display:none}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="head">
+    <div>
+      <div class="eyebrow">Shared prepaid meter</div>
+      <h1>Units</h1>
+    </div>
+    <div class="total">
+      <span class="eyebrow">In the house</span>
+      <div id="houseTotal">–</div>
+    </div>
+  </div>
+
+  <div id="list"></div>
+
+  <div id="addWrap"></div>
+
+  <div class="foot">
+    <label class="eyebrow" for="thr">Flag below</label>
+    <input id="thr" type="number" inputmode="decimal" step="0.1">
+  </div>
+</div>
+
+<script>
+const KEY = 'units-v1';
+let state = { people: [], threshold: 10 };
+let open = {};           // { [id]: 'load' | 'read' | 'log' | 'confirm' | null }
+let errs = {};
+
+const n1 = v => (Math.round(v * 10) / 10).toFixed(1);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function load() {
+  try {
+    const r = await window.storage.get(KEY);
+    if (r && r.value) state = JSON.parse(r.value);
+  } catch (e) { /* first run — nothing saved yet */ }
+  render();
+}
+async function save() {
+  try { await window.storage.set(KEY, JSON.stringify(state)); }
+  catch (e) { console.error('Could not save', e); }
+}
+
+/* units burned per day, from the last two meter readings */
+function rate(p) {
+  const reads = p.history.filter(h => h.t === 'read');
+  if (reads.length < 2) return null;
+  const a = reads[reads.length - 2], b = reads[reads.length - 1];
+  const days = (b.at - a.at) / 86400000;
+  const used = b.v - a.v;
+  if (days < 0.25 || used <= 0) return null;
+  return used / days;
+}
+
+function render() {
+  const list = document.getElementById('list');
+  document.getElementById('thr').value = state.threshold;
+
+  const house = state.people.reduce((s, p) => s + (p.loaded - p.reading), 0);
+  document.getElementById('houseTotal').textContent =
+    state.people.length ? n1(house) : '–';
+
+  if (!state.people.length) {
+    list.innerHTML = `<div class="empty">Nobody's on the meter yet.<br>Add the first person with their total loaded and their current sub-meter reading.</div>`;
+  } else {
+    list.innerHTML = state.people.map(card).join('');
+  }
+
+  document.getElementById('addWrap').innerHTML = open.NEW
+    ? addForm()
+    : `<div class="row"><button class="btn" data-act="newOpen">Add a person</button></div>`;
+
+  wire();
+}
+
+function card(p) {
+  const bal = p.loaded - p.reading;
+  const low = bal < state.threshold;
+  const r = rate(p);
+  const daysLeft = r && bal > 0 ? Math.floor(bal / r) : null;
+  const shown = n1(bal);
+
+  return `
+  <div class="card">
+    <div class="card-top">
+      <div class="name">${esc(p.name)}</div>
+      ${low ? `<div class="tag">Low</div>` : ''}
+    </div>
+
+    <div class="lcd">
+      <div class="digits ${low ? 'warn' : ''}">
+        <span class="ghost" aria-hidden="true">${shown.replace(/[0-9]/g, '8')}</span>${shown}
+      </div>
+      <div class="lcd-foot">
+        <div class="unit">units left</div>
+        <div class="rate">${r ? n1(r) + '/day' + (daysLeft !== null ? ' · ~' + daysLeft + 'd' : '') : 'rate pending'}</div>
+      </div>
+    </div>
+
+    <div class="sum">
+      <b>${n1(p.loaded)}</b> loaded <span>–</span> <b>${n1(p.reading)}</b> on meter
+    </div>
+
+    ${open[p.id] === 'load' ? form(p, 'load') : ''}
+    ${open[p.id] === 'read' ? form(p, 'read') : ''}
+    ${open[p.id] === 'log' ? logView(p) : ''}
+    ${open[p.id] === 'confirm' ? confirmView(p) : ''}
+
+    ${['load', 'read', 'confirm'].includes(open[p.id]) ? '' : `
+    <div class="row">
+      <button class="btn solid" data-act="open" data-id="${p.id}" data-mode="load">Add recharge</button>
+      <button class="btn" data-act="open" data-id="${p.id}" data-mode="read">Update meter</button>
+    </div>
+    <div class="row minor">
+      <button class="mini" data-act="undo" data-id="${p.id}" ${p.history.length > 1 ? '' : 'disabled'}>Undo last</button>
+      <button class="mini" data-act="open" data-id="${p.id}" data-mode="log">Log</button>
+      <span style="flex:1"></span>
+      <button class="mini danger" data-act="open" data-id="${p.id}" data-mode="confirm">Remove</button>
+    </div>`}
+  </div>`;
+}
+
+function confirmView(p) {
+  return `
+  <div class="form">
+    <div class="hint">Remove ${esc(p.name)} and all ${p.history.length} entries logged for them? This can't be undone.</div>
+    <div class="row">
+      <button class="btn danger" data-act="remove" data-id="${p.id}">Remove ${esc(p.name)}</button>
+      <button class="btn" data-act="cancel" data-id="${p.id}">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function form(p, mode) {
+  const isLoad = mode === 'load';
+  return `
+  <div class="form">
+    <label class="eyebrow" for="in-${p.id}">
+      ${isLoad ? 'Units recharged' : 'Reading on the sub-meter now'}
+    </label>
+    <input id="in-${p.id}" type="number" inputmode="decimal" step="0.1"
+      placeholder="${isLoad ? 'e.g. 50' : 'e.g. ' + n1(p.reading + 5)}" autofocus>
+    ${errs[p.id] ? `<div class="err">${esc(errs[p.id])}</div>` : ''}
+    <div class="hint">${isLoad
+      ? 'Adds to the ' + n1(p.loaded) + ' already loaded.'
+      : 'Last reading was ' + n1(p.reading) + '.'}</div>
+    <div class="row">
+      <button class="btn solid" data-act="submit" data-id="${p.id}" data-mode="${mode}">${isLoad ? 'Add units' : 'Save reading'}</button>
+      <button class="btn" data-act="cancel" data-id="${p.id}">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function logView(p) {
+  const items = [...p.history].reverse().slice(0, 8);
+  return `
+  <div class="log">
+    ${items.map(h => `
+      <div class="log-item">
+        <span>${h.t === 'load' ? 'Recharged <b>+' + n1(h.v) + '</b>' : 'Meter read <b>' + n1(h.v) + '</b>'}</span>
+        <span>${new Date(h.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</span>
+      </div>`).join('')}
+    <div class="row"><button class="btn" data-act="cancel" data-id="${p.id}">Close</button></div>
+  </div>`;
+}
+
+function addForm() {
+  return `
+  <div class="card">
+    <div class="card-top"><div class="name">New person</div></div>
+    <div class="form" style="border:none;padding-top:0;margin-top:0">
+      <label class="eyebrow" for="nName">Name</label>
+      <input id="nName" type="text" placeholder="Barber" autofocus>
+      <label class="eyebrow" for="nLoad" style="margin-top:14px">Total units loaded so far</label>
+      <input id="nLoad" type="number" inputmode="decimal" step="0.1" placeholder="1743.5">
+      <label class="eyebrow" for="nRead" style="margin-top:14px">Reading on their sub-meter now</label>
+      <input id="nRead" type="number" inputmode="decimal" step="0.1" placeholder="1731.9">
+      ${errs.NEW ? `<div class="err">${esc(errs.NEW)}</div>` : ''}
+      <div class="row">
+        <button class="btn solid" data-act="newSave">Add to the meter</button>
+        <button class="btn" data-act="newCancel">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── actions ───────────────────────── */
+function wire() {
+  document.querySelectorAll('[data-act]').forEach(el => {
+    el.onclick = () => act(el.dataset.act, el.dataset.id, el.dataset.mode);
+  });
+  document.getElementById('thr').onchange = e => {
+    const v = parseFloat(e.target.value);
+    state.threshold = isNaN(v) ? 0 : v;
+    save(); render();
+  };
+  const f = document.querySelector('input[autofocus]');
+  if (f) f.focus();
+}
+
+function act(a, id, mode) {
+  const p = state.people.find(x => x.id === id);
+
+  if (a === 'open')   { open = { [id]: mode }; errs = {}; return render(); }
+  if (a === 'cancel') { open = {}; errs = {}; return render(); }
+  if (a === 'newOpen')  { open = { NEW: true }; errs = {}; return render(); }
+  if (a === 'newCancel'){ open = {}; errs = {}; return render(); }
+
+  if (a === 'submit') {
+    const v = parseFloat(document.getElementById('in-' + id).value);
+    if (isNaN(v)) { errs[id] = 'Type a number first.'; return render(); }
+
+    if (mode === 'load') {
+      if (v <= 0) { errs[id] = 'A recharge has to be more than zero.'; return render(); }
+      p.loaded = +(p.loaded + v).toFixed(2);
+      p.history.push({ t: 'load', v, at: Date.now() });
+    } else {
+      if (v < p.reading) {
+        errs[id] = `That's below the last reading of ${n1(p.reading)}. A sub-meter only counts up — check the number.`;
+        return render();
+      }
+      p.reading = v;
+      p.history.push({ t: 'read', v, at: Date.now() });
+    }
+    open = {}; errs = {}; save(); return render();
+  }
+
+  if (a === 'newSave') {
+    const name = document.getElementById('nName').value.trim();
+    const loaded = parseFloat(document.getElementById('nLoad').value);
+    const reading = parseFloat(document.getElementById('nRead').value);
+    if (!name) { errs.NEW = 'Give this person a name.'; return render(); }
+    if (isNaN(loaded) || isNaN(reading)) { errs.NEW = 'Both numbers are needed to work out the balance.'; return render(); }
+    state.people.push({
+      id: uid(), name, loaded, reading,
+      history: [{ t: 'read', v: reading, at: Date.now() }]
+    });
+    open = {}; errs = {}; save(); return render();
+  }
+
+  if (a === 'undo') {
+    if (p.history.length < 2) return;
+    const last = p.history.pop();
+    if (last.t === 'load') p.loaded = +(p.loaded - last.v).toFixed(2);
+    else {
+      const prev = [...p.history].reverse().find(h => h.t === 'read');
+      p.reading = prev ? prev.v : p.reading;
+    }
+    save(); return render();
+  }
+
+  if (a === 'remove') {
+    state.people = state.people.filter(x => x.id !== id);
+    open = {}; save(); return render();
+  }
+}
+
+load();
+</script>

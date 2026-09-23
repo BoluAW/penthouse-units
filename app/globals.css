@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --case: #17150f;
+  --case-2: #211e16;
+  --edge: #332e22;
+  --lcd: #0b120e;
+  --amber: #e8b33a;
+  --amber-dim: #8a6c22;
+  --ink: #ede6d4;
+  --muted: #8a8272;
+  --low: #d9542b;
+  --ok: #7fa05a;
+}
+
+@theme inline {
+  --color-case: var(--case);
+  --color-case-2: var(--case-2);
+  --color-edge: var(--edge);
+  --color-lcd: var(--lcd);
+  --color-amber: var(--amber);
+  --color-amber-dim: var(--amber-dim);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-low: var(--low);
+  --color-ok: var(--ok);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-jetbrains);
+}
+
+body {
+  background: var(--case);
+  color: var(--ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.digits-ghost {
+  color: var(--amber);
+  opacity: 0.07;
+  text-shadow: none;
+}
+.digits.warn .digits-ghost {
+  color: var(--low);
+}
+
+.lcd-scan::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.035) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
