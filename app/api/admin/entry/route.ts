@@ -26,12 +26,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing or invalid fields." }, { status: 400 });
   }
 
-  const SERVICE_FEE = 15;
-  const credited = kind === "recharge" ? value - SERVICE_FEE : value;
+  const fee = kind === "recharge" ? Number(body?.fee ?? 0) : 0;
+  if (!Number.isFinite(fee) || fee < 0) {
+    return NextResponse.json({ error: "Service fee must be zero or more." }, { status: 400 });
+  }
+
+  const credited = value - fee;
 
   if (kind === "recharge" && credited <= 0) {
     return NextResponse.json(
-      { error: `Recharge must be more than ${SERVICE_FEE} to cover the service fee.` },
+      { error: `Recharge must be more than ${fee} to cover the service fee.` },
       { status: 400 }
     );
   }

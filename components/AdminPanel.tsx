@@ -49,18 +49,20 @@ export function AdminPanel({
     setConfirmDelete((c) => ({ ...c, [id]: false }));
   }
 
-  async function submitEntry(id: string, mode: "load" | "read", raw: string) {
+  async function submitEntry(id: string, mode: "load" | "read", raw: string, fee?: number) {
     const value = parseFloat(raw);
     if (isNaN(value)) {
       setErrs((e) => ({ ...e, [id]: "Type a number first." }));
       return;
     }
     setPending(id);
-    const { ok, data } = await callApi("/api/admin/entry", "POST", {
+    const body: Record<string, unknown> = {
       personId: id,
       kind: mode === "load" ? "recharge" : "reading",
       value,
-    });
+    };
+    if (mode === "load" && fee !== undefined) body.fee = fee;
+    const { ok, data } = await callApi("/api/admin/entry", "POST", body);
     setPending(null);
     if (!ok) {
       setErrs((e) => ({ ...e, [id]: data?.error ?? "Something went wrong." }));
@@ -211,12 +213,13 @@ export function AdminPanel({
                 <EntryForm
                   label="Units recharged"
                   placeholder="e.g. 50"
-                  hint={`15 service fee deducted automatically. ${n1(s.person.loaded)} already loaded.`}
+                  hint={`${n1(s.person.loaded)} already loaded.`}
                   error={errs[id]}
                   submitLabel="Add units"
                   busy={pending === id}
+                  showFee
                   onCancel={() => cancel(id)}
-                  onSubmit={(v) => submitEntry(id, "load", v)}
+                  onSubmit={(v, fee) => submitEntry(id, "load", v, fee)}
                 />
               )}
 
@@ -563,6 +566,7 @@ function EntryForm({
   error,
   submitLabel,
   busy,
+  showFee,
   onCancel,
   onSubmit,
 }: {
@@ -572,10 +576,18 @@ function EntryForm({
   error?: string;
   submitLabel: string;
   busy: boolean;
+  showFee?: boolean;
   onCancel: () => void;
-  onSubmit: (value: string) => void;
+  onSubmit: (value: string, fee?: number) => void;
 }) {
   const [value, setValue] = useState("");
+  const [fee, setFee] = useState("15");
+  const parsedFee = parseFloat(fee);
+  const parsedValue = parseFloat(value);
+  const credited = showFee && Number.isFinite(parsedValue) && Number.isFinite(parsedFee)
+    ? parsedValue - parsedFee
+    : null;
+
   return (
     <div className="mt-3.5 border-t border-edge pt-3.5">
       <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
@@ -591,11 +603,32 @@ function EntryForm({
         placeholder={placeholder}
         className="w-full rounded-md border border-edge bg-lcd px-3 py-3 font-mono text-base tabular-nums text-ink focus:border-amber focus:outline-none"
       />
+      {showFee && (
+        <div className="mt-2.5">
+          <label className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
+            Service fee
+          </label>
+          <input
+            type="number"
+            inputMode="decimal"
+            step="0.1"
+            value={fee}
+            onChange={(e) => setFee(e.target.value)}
+            placeholder="0"
+            className="w-full rounded-md border border-edge bg-lcd px-3 py-3 font-mono text-base tabular-nums text-ink focus:border-amber focus:outline-none"
+          />
+          {credited !== null && credited > 0 && (
+            <div className="mt-1.5 font-mono text-xs tabular-nums text-ok">
+              {n1(credited)} units credited after fee
+            </div>
+          )}
+        </div>
+      )}
       {error && <div className="mt-2 text-xs leading-relaxed text-low">{error}</div>}
       <div className="mt-2 text-xs leading-relaxed text-muted">{hint}</div>
       <div className="mt-3.5 flex gap-2">
         <button
-          onClick={() => onSubmit(value)}
+          onClick={() => onSubmit(value, showFee ? parsedFee : undefined)}
           disabled={busy}
           className="flex-1 rounded-md border border-amber bg-amber py-2.5 text-[13px] font-semibold text-case hover:bg-[#F0C155] disabled:opacity-50"
         >
