@@ -8,7 +8,7 @@ export type Person = {
   archived_at: string | null;
 };
 
-export type EntryKind = "recharge" | "reading";
+export type EntryKind = "recharge" | "reading" | "debit";
 
 export type Entry = {
   id: string;

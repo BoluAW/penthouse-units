@@ -20,10 +20,24 @@ export async function POST(request: Request) {
 
   if (
     typeof personId !== "string" ||
-    (kind !== "recharge" && kind !== "reading") ||
+    (kind !== "recharge" && kind !== "reading" && kind !== "debit") ||
     !Number.isFinite(value)
   ) {
     return NextResponse.json({ error: "Missing or invalid fields." }, { status: 400 });
+  }
+
+  if (kind === "debit") {
+    if (value <= 0) {
+      return NextResponse.json({ error: "Debit value must be greater than zero." }, { status: 400 });
+    }
+
+    const { error } = await supabase.from("entries").insert({ person_id: personId, kind, value });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    return NextResponse.json({ ok: true, debited: value });
   }
 
   const fee = kind === "recharge" ? Number(body?.fee ?? 0) : 0;

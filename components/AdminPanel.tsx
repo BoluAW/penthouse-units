@@ -8,7 +8,7 @@ import { n1 } from "@/lib/format";
 import type { PersonSummary } from "@/lib/summary";
 import type { Entry } from "@/lib/types";
 
-type Mode = "load" | "read" | "log" | "edit";
+type Mode = "load" | "read" | "debit" | "log" | "edit";
 type ArchivedPerson = { id: string; name: string; archivedAt: string };
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
@@ -72,6 +72,22 @@ export function AdminPanel({
     router.refresh();
   }
 
+  async function submitDebit(id: string) {
+    setPending(id);
+    const { ok, data } = await callApi("/api/admin/entry", "POST", {
+      personId: id,
+      kind: "debit",
+      value: 15,
+    });
+    setPending(null);
+    if (!ok) {
+      setErrs((e) => ({ ...e, [id]: data?.error ?? "Something went wrong." }));
+      return;
+    }
+    cancel(id);
+    router.refresh();
+  }
+
   async function undo(id: string) {
     setPending(id);
     const { ok, data } = await callApi("/api/admin/undo", "POST", { personId: id });
@@ -83,6 +99,8 @@ export function AdminPanel({
       const label =
         removed?.kind === "recharge"
           ? `Removed recharge of ${n1(removed.value)}`
+          : removed?.kind === "debit"
+          ? `Removed debit of ${n1(removed.value)}`
           : `Removed reading of ${n1(removed?.value ?? 0)}`;
       setUndoMsg((m) => ({ ...m, [id]: label }));
       router.refresh();
@@ -236,6 +254,36 @@ export function AdminPanel({
                 />
               )}
 
+              {open[id] === "debit" && (
+                <div className="mt-3.5 border-t border-edge pt-3.5">
+                  <div className="mb-2 text-xs leading-relaxed text-muted">
+                    This will remove <b className="font-medium text-ink">15 units</b> from{" "}
+                    <b className="font-medium text-ink">{s.person.name}</b>&rsquo;s balance.
+                  </div>
+                  <div className="mb-2 font-mono text-xs tabular-nums text-muted">
+                    Current balance: <b className="font-medium text-ink">{n1(s.person.loaded - s.person.reading)}</b>
+                    {" → "}
+                    <b className="font-medium text-low">{n1(s.person.loaded - s.person.reading - 15)}</b>
+                  </div>
+                  {errs[id] && <div className="mb-2 text-xs leading-relaxed text-low">{errs[id]}</div>}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => submitDebit(id)}
+                      disabled={pending === id}
+                      className="flex-1 rounded-md border border-low bg-low py-2.5 text-[13px] font-semibold text-white hover:bg-[#E8663C] disabled:opacity-50"
+                    >
+                      Confirm debit −15
+                    </button>
+                    <button
+                      onClick={() => cancel(id)}
+                      className="flex-1 rounded-md border border-edge py-2.5 text-[13px] font-semibold hover:bg-white/[0.04]"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {open[id] === "log" && (
                 <div className="mt-3 border-t border-edge pt-1">
                   {s.entries.map((h) => (
@@ -387,6 +435,15 @@ export function AdminPanel({
                       className="flex-1 rounded-md border border-edge py-2.5 text-[13px] font-semibold hover:border-[#4A4433] hover:bg-white/[0.04]"
                     >
                       Update meter
+                    </button>
+                  </div>
+                  <div className="mt-2">
+                    <button
+                      onClick={() => openForm(id, "debit")}
+                      disabled={s.person.loaded - s.person.reading < 15}
+                      className="w-full rounded-md border border-low/40 py-2.5 text-[13px] font-semibold text-low hover:border-low hover:bg-low/10 disabled:opacity-30"
+                    >
+                      Debit 15 units
                     </button>
                   </div>
                   <div className="mt-2 flex items-center gap-1">
@@ -675,6 +732,10 @@ function LogRow({
           {entry.kind === "recharge" ? (
             <>
               Recharged <b className="font-medium text-ink">+{n1(entry.value)}</b>
+            </>
+          ) : entry.kind === "debit" ? (
+            <>
+              Debited <b className="font-medium text-low">−{n1(entry.value)}</b>
             </>
           ) : (
             <>
