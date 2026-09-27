@@ -20,7 +20,7 @@ const MUTED = "#8A8272";
 const LOW = "#D9542B";
 
 const WIDTH = 900;
-const ROW_H = 62;
+const ROW_H = 86;
 
 export async function GET() {
   const admin = await getCurrentPerson();
@@ -124,28 +124,46 @@ export async function GET() {
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  fontSize: 27,
-                  color: INK,
+                  flexDirection: "column",
                 }}
               >
-                {r.name}
-                {r.low && (
-                  <div
-                    style={{
-                      fontFamily: "JetBrains Mono",
-                      fontSize: 15,
-                      letterSpacing: 2,
-                      color: LOW,
-                      border: `1px solid ${LOW}`,
-                      borderRadius: 4,
-                      padding: "3px 8px",
-                      marginLeft: 14,
-                    }}
-                  >
-                    LOW
-                  </div>
-                )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontSize: 27,
+                    color: INK,
+                  }}
+                >
+                  {r.name}
+                  {r.low && (
+                    <div
+                      style={{
+                        fontFamily: "JetBrains Mono",
+                        fontSize: 15,
+                        letterSpacing: 2,
+                        color: LOW,
+                        border: `1px solid ${LOW}`,
+                        borderRadius: 4,
+                        padding: "3px 8px",
+                        marginLeft: 14,
+                      }}
+                    >
+                      LOW
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    fontFamily: "JetBrains Mono",
+                    fontSize: 14,
+                    color: MUTED,
+                    marginTop: 6,
+                  }}
+                >
+                  {n1(r.loaded)} loaded · {n1(r.reading)} on meter
+                </div>
               </div>
               <div
                 style={{

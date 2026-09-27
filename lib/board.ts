@@ -3,6 +3,8 @@ import { supabase } from "./supabase";
 
 export type BoardRow = {
   name: string;
+  loaded: number;
+  reading: number;
   balance: number;
   low: boolean;
 };
@@ -31,8 +33,10 @@ export async function getBoard(): Promise<{ rows: BoardRow[]; total: number }> {
   const rows: BoardRow[] = (people ?? [])
     .filter((p) => onMeter.has(p.id))
     .map((p) => {
-      const balance = Number(p.loaded) - Number(p.reading);
-      return { name: p.name, balance, low: balance < Number(p.threshold) };
+      const loaded = Number(p.loaded);
+      const reading = Number(p.reading);
+      const balance = loaded - reading;
+      return { name: p.name, loaded, reading, balance, low: balance < Number(p.threshold) };
     })
     .sort((a, b) => b.balance - a.balance);
 
