@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { getPersonSummary } from "@/lib/summary";
 import { AdminPanel } from "@/components/AdminPanel";
 import { LogoutButton } from "@/components/LogoutButton";
-import { n1 } from "@/lib/format";
+
 
 export default async function AdminPage() {
   const admin = await getCurrentPerson();
@@ -24,7 +24,6 @@ export default async function AdminPage() {
   const summaries = await Promise.all(activeIds.map((id) => getPersonSummary(id)));
   const adminPeople = summaries.filter((s) => s !== null);
 
-  const houseTotal = adminPeople.reduce((sum, s) => sum + s.balance, 0);
 
   return (
     <div className="mx-auto max-w-[560px] px-4 pt-5 pb-12">
@@ -37,17 +36,7 @@ export default async function AdminPage() {
             Units
           </h1>
         </div>
-        <div className="flex items-end gap-3">
-          <div className="text-right font-mono leading-none">
-            <span className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
-              In the house
-            </span>
-            <div className="text-xl font-medium tabular-nums">
-              {adminPeople.length ? n1(houseTotal) : "–"}
-            </div>
-          </div>
-          <LogoutButton />
-        </div>
+        <LogoutButton />
       </div>
 
       <AdminPanel initialPeople={adminPeople} archivedPeople={archivedPeople} />
