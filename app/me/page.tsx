@@ -3,6 +3,7 @@ import { getCurrentPerson } from "@/lib/auth";
 import { getPersonSummary } from "@/lib/summary";
 import { PersonCard } from "@/components/PersonCard";
 import { LogoutButton } from "@/components/LogoutButton";
+import { EntryLog } from "@/components/EntryLog";
 
 export default async function MePage() {
   const person = await getCurrentPerson();
@@ -32,7 +33,9 @@ export default async function MePage() {
         threshold={summary.person.threshold}
         rate={summary.rate}
         daysLeft={summary.daysLeft}
-      />
+      >
+        <EntryLog entries={summary.entries} />
+      </PersonCard>
     </div>
   );
 }
