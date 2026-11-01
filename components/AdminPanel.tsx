@@ -440,8 +440,7 @@ export function AdminPanel({
                   <div className="mt-2">
                     <button
                       onClick={() => openForm(id, "debit")}
-                      disabled={s.person.loaded - s.person.reading < 15}
-                      className="w-full rounded-md border border-low/40 py-2.5 text-[13px] font-semibold text-low hover:border-low hover:bg-low/10 disabled:opacity-30"
+                      className="w-full rounded-md border border-low/40 py-2.5 text-[13px] font-semibold text-low hover:border-low hover:bg-low/10"
                     >
                       Debit 15 units
                     </button>
